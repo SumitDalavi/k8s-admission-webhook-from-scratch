@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: valid-pod
+  labels:
+    team: security
+spec:
+  containers:
+  - name: my-app
+    image: nginx
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      privileged: false
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: invalid-pod-root
+  labels:
+    team: security
+spec:
+  containers:
+  - name: my-app
+    image: nginx
+    securityContext:
+      runAsNonRoot: false
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: invalid-pod-no-team
+spec:
+  containers:
+  - name: my-app
+    image: nginx
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
