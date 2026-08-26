@@ -10,6 +10,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
+	"k8s.io/apimachinery/pkg/types"
 )
 
 var (
@@ -55,7 +56,7 @@ const injectedAnnotation = "sidecar-injector/status"
 func Handle(w http.ResponseWriter, r *http.Request) {
 	body := readBody(r)
 	ar := admissionv1.AdmissionReview{}
-	if _, _, err := codecs.UniversalDeserializer().Decode(body, nil, &ar); err != nil {
+	if _, _, err := codecFactory.UniversalDeserializer().Decode(body, nil, &ar); err != nil {
 		http.Error(w, fmt.Sprintf("decode error: %v", err), http.StatusBadRequest)
 		return
 	}
