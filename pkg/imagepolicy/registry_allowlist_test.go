@@ -45,7 +45,7 @@ func TestHandleValidAllowed(t *testing.T) {
 		},
 	}
 	reqBody := createReview("123", pod)
-	
+
 	req := httptest.NewRequest("POST", "/validate", bytes.NewBuffer(reqBody))
 	rr := httptest.NewRecorder()
 
@@ -67,11 +67,11 @@ func TestHandleValidDenied(t *testing.T) {
 	pod := corev1.Pod{
 		Spec: corev1.PodSpec{
 			InitContainers: []corev1.Container{{Image: "docker.io/malicious/image"}}, // malicious, not library
-			Containers: []corev1.Container{{Image: "gcr.io/ok/image"}},
+			Containers:     []corev1.Container{{Image: "gcr.io/ok/image"}},
 		},
 	}
 	reqBody := createReview("124", pod)
-	
+
 	req := httptest.NewRequest("POST", "/validate", bytes.NewBuffer(reqBody))
 	rr := httptest.NewRecorder()
 

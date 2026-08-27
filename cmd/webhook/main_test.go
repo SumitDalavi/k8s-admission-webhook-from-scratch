@@ -60,10 +60,10 @@ func TestServeInvalidJSON(t *testing.T) {
 
 func TestServeNilRequest(t *testing.T) {
 	handler := serve(mockAdmitFunc)
-	
+
 	review := admissionv1.AdmissionReview{} // Request is nil
 	b, _ := json.Marshal(review)
-	
+
 	req := httptest.NewRequest("POST", "/", bytes.NewBuffer(b))
 	req.Header.Set("Content-Type", "application/json")
 	rr := httptest.NewRecorder()
@@ -76,14 +76,14 @@ func TestServeNilRequest(t *testing.T) {
 
 func TestServeInvalidPodJSON(t *testing.T) {
 	handler := serve(mockAdmitFunc)
-	
+
 	review := admissionv1.AdmissionReview{
 		Request: &admissionv1.AdmissionRequest{
 			Object: runtime.RawExtension{Raw: []byte("invalid pod json")},
 		},
 	}
 	b, _ := json.Marshal(review)
-	
+
 	req := httptest.NewRequest("POST", "/", bytes.NewBuffer(b))
 	req.Header.Set("Content-Type", "application/json")
 	rr := httptest.NewRecorder()
@@ -96,18 +96,18 @@ func TestServeInvalidPodJSON(t *testing.T) {
 
 func TestServeSuccess(t *testing.T) {
 	handler := serve(mockAdmitFunc)
-	
+
 	pod := corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "test-pod"}}
 	podBytes, _ := json.Marshal(pod)
 
 	review := admissionv1.AdmissionReview{
 		Request: &admissionv1.AdmissionRequest{
-			UID: "1234",
+			UID:    "1234",
 			Object: runtime.RawExtension{Raw: podBytes},
 		},
 	}
 	b, _ := json.Marshal(review)
-	
+
 	req := httptest.NewRequest("POST", "/", bytes.NewBuffer(b))
 	req.Header.Set("Content-Type", "application/json")
 	rr := httptest.NewRecorder()

@@ -28,9 +28,9 @@ type SidecarConfig struct {
 var DefaultSidecar = SidecarConfig{
 	Containers: []corev1.Container{
 		{
-			Name:  "otel-sidecar",
-			Image: "otel/opentelemetry-collector-contrib:latest",
-			Args:  []string{"--config=/etc/otel/config.yaml"},
+			Name:      "otel-sidecar",
+			Image:     "otel/opentelemetry-collector-contrib:latest",
+			Args:      []string{"--config=/etc/otel/config.yaml"},
 			Resources: corev1.ResourceRequirements{},
 			VolumeMounts: []corev1.VolumeMount{
 				{Name: "otel-config", MountPath: "/etc/otel"},
@@ -101,8 +101,8 @@ func buildPatches(pod *corev1.Pod) []map[string]interface{} {
 	}
 	// Mark as injected
 	patches = append(patches, map[string]interface{}{
-		"op": "add",
-		"path": "/metadata/annotations/sidecar-injector~1status",
+		"op":    "add",
+		"path":  "/metadata/annotations/sidecar-injector~1status",
 		"value": "injected",
 	})
 	return patches

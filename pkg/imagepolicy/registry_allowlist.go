@@ -18,7 +18,7 @@ var AllowedRegistries = []string{
 	"ghcr.io/",
 	"registry.k8s.io/",
 	"quay.io/",
-	"docker.io/library/",  // official images only
+	"docker.io/library/", // official images only
 }
 
 // Handle validates that all container images come from allowed registries.
@@ -28,7 +28,9 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 		tmp := make([]byte, 512)
 		n, err := r.Body.Read(tmp)
 		body = append(body, tmp[:n]...)
-		if err != nil { break }
+		if err != nil {
+			break
+		}
 	}
 
 	ar := admissionv1.AdmissionReview{}
