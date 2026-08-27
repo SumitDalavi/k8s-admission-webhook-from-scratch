@@ -34,3 +34,6 @@ bin/
 coverage.out
 
 coverage.html
+
+.venv/
+.terraform/
