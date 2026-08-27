@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/your-username/k8s-admission-webhook-from-scratch/pkg/mutate"
 	"github.com/your-username/k8s-admission-webhook-from-scratch/pkg/validate"
@@ -27,16 +28,23 @@ func init() {
 	_ = admissionv1.AddToScheme(runtimeScheme)
 }
 
-func main() {
-	http.HandleFunc("/validate", serve(validate.ValidatePod))
-	http.HandleFunc("/mutate", serve(mutate.MutatePod))
+func run(certFile, keyFile string) int {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/validate", serve(validate.ValidatePod))
+	mux.HandleFunc("/mutate", serve(mutate.MutatePod))
 
 	log.Println("Starting webhook server on port 8443...")
-	// Webhooks in k8s MUST be served over HTTPS. We assume certs are mounted at /etc/webhook/certs
-	err := http.ListenAndServeTLS(":8443", "/etc/webhook/certs/tls.crt", "/etc/webhook/certs/tls.key", nil)
+	err := http.ListenAndServeTLS(":8443", certFile, keyFile, mux)
 	if err != nil {
-		log.Fatalf("Failed to start server: %v", err)
+		log.Printf("Failed to start server: %v", err)
+		return 1
 	}
+	return 0
+}
+
+func main() {
+	// Webhooks in k8s MUST be served over HTTPS. We assume certs are mounted at /etc/webhook/certs
+	os.Exit(run("/etc/webhook/certs/tls.crt", "/etc/webhook/certs/tls.key"))
 }
 
 type admitFunc func(*admissionv1.AdmissionRequest, *corev1.Pod) *admissionv1.AdmissionResponse

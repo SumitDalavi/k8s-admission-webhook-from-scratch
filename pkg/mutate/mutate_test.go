@@ -6,48 +6,72 @@ import (
 	"testing"
 
 	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 )
 
-func TestMutatePod(t *testing.T) {
+func TestMutatePodNilLabels(t *testing.T) {
 	pod := &corev1.Pod{
 		Spec: corev1.PodSpec{
+			Containers: []corev1.Container{{}},
+		},
+	}
+	resp := MutatePod(nil, pod)
+	if !resp.Allowed {
+		t.Fatal("expected allowed")
+	}
+
+	patchStr := string(resp.Patch)
+	if !strings.Contains(patchStr, "/metadata/labels") {
+		t.Errorf("expected patch to add labels")
+	}
+	if !strings.Contains(patchStr, "/spec/containers/0/resources/limits") {
+		t.Errorf("expected patch to add resource limits")
+	}
+}
+
+func TestMutatePodExistingLabelsWithoutCostCenter(t *testing.T) {
+	pod := &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Labels: map[string]string{"app": "foo"},
+		},
+	}
+	resp := MutatePod(nil, pod)
+	if !resp.Allowed {
+		t.Fatal("expected allowed")
+	}
+
+	patchStr := string(resp.Patch)
+	if !strings.Contains(patchStr, "/metadata/labels/cost-center") {
+		t.Errorf("expected patch to add cost-center label")
+	}
+}
+
+func TestMutatePodExistingCostCenterAndResources(t *testing.T) {
+	pod := &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Labels: map[string]string{"cost-center": "existing"},
+		},
+		Spec: corev1.PodSpec{
 			Containers: []corev1.Container{
-				{Name: "app1"}, // No resources
+				{
+					Resources: corev1.ResourceRequirements{
+						Limits: corev1.ResourceList{
+							corev1.ResourceCPU: resource.MustParse("100m"),
+						},
+					},
+				},
 			},
 		},
 	}
-
 	resp := MutatePod(nil, pod)
 	if !resp.Allowed {
-		t.Fatalf("expected allowed to be true")
-	}
-
-	if len(resp.Patch) == 0 {
-		t.Fatalf("expected patch to be generated")
+		t.Fatal("expected allowed")
 	}
 
 	var patches []patchOperation
-	err := json.Unmarshal(resp.Patch, &patches)
-	if err != nil {
-		t.Fatalf("failed to unmarshal patch: %v", err)
-	}
-
-	hasLabelPatch := false
-	hasResourcePatch := false
-
-	for _, p := range patches {
-		if strings.Contains(p.Path, "/metadata/labels") && p.Value == "default-engineering" || p.Value.(map[string]interface{})["cost-center"] == "default-engineering" {
-			hasLabelPatch = true
-		}
-		if strings.Contains(p.Path, "/resources/limits") {
-			hasResourcePatch = true
-		}
-	}
-
-	if !hasLabelPatch {
-		t.Errorf("expected patch to include cost-center label")
-	}
-	if !hasResourcePatch {
-		t.Errorf("expected patch to include resource limits")
+	json.Unmarshal(resp.Patch, &patches)
+	if len(patches) != 0 {
+		t.Errorf("expected no patches, got %d", len(patches))
 	}
 }
