@@ -1,6 +1,6 @@
 module github.com/your-username/k8s-admission-webhook-from-scratch
 
-go 1.20
+go 1.24.0
 
 require (
 	k8s.io/api v0.36.3
