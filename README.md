@@ -1,5 +1,8 @@
 # Kubernetes Admission Webhook (Hand-Built, Go)
 
+> **Maturity:** Full Prototype
+> _End-to-end Kubernetes validating and mutating admission webhook built in Go._
+
 A hand-written Kubernetes Validating and Mutating Admission Webhook built from scratch in Go. This project demonstrates a deep understanding of the raw Kubernetes admission control API and TLS handling without relying on policy frameworks like Kyverno or OPA Gatekeeper.
 
 ## The Problem
@@ -46,9 +49,26 @@ k8s-admission-webhook-from-scratch/
 ├── pkg/validate/           # Validating logic and unit tests
 ├── k8s/                    # Webhook deployments and test pods
 ├── scripts/                # TLS generation script
+├── docs/                   # Documentation and ADRs
 ├── Dockerfile              # Containerizes the Go server
 └── README.md               # This file
 ```
+
+## Mock Boundaries (Honest Scope)
+
+| What | Status | Details |
+|---|---|---|
+| Kubernetes API | **Real** | Directly handles `AdmissionReview` requests from the API Server. |
+| TLS Certificates | **Real** | Uses OpenSSL for self-signed certificates acting as the CA. |
+| kind Cluster | **Optional** | Tested on `kind` cluster locally, deployable to any K8s cluster. |
+
+## 📚 Documentation
+
+- [Architecture](docs/architecture.md) — System diagram and component details
+- [Runbook](docs/runbook.md) — Setup, commands, and expected outputs
+- [Decisions](docs/decisions.md) — ADRs for webhook pattern choices
+- [Changelog](docs/changelog.md) — Change history
+
 
 ## Prerequisites
 
