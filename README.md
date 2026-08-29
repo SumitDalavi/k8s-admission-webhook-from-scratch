@@ -1,5 +1,7 @@
 # Kubernetes Admission Webhook (Hand-Built, Go)
 
+![CI](https://github.com/SumitDalavi/k8s-admission-webhook-from-scratch/actions/workflows/ci.yml/badge.svg?branch=master)
+
 > **Maturity:** Full Prototype
 > _End-to-end Kubernetes validating and mutating admission webhook built in Go._
 
@@ -54,21 +56,12 @@ k8s-admission-webhook-from-scratch/
 └── README.md               # This file
 ```
 
-## Mock Boundaries (Honest Scope)
-
-| What | Status | Details |
-|---|---|---|
-| Kubernetes API | **Real** | Directly handles `AdmissionReview` requests from the API Server. |
-| TLS Certificates | **Real** | Uses OpenSSL for self-signed certificates acting as the CA. |
-| kind Cluster | **Optional** | Tested on `kind` cluster locally, deployable to any K8s cluster. |
-
 ## 📚 Documentation
 
 - [Architecture](docs/architecture.md) — System diagram and component details
 - [Runbook](docs/runbook.md) — Setup, commands, and expected outputs
 - [Decisions](docs/decisions.md) — ADRs for webhook pattern choices
 - [Changelog](docs/changelog.md) — Change history
-
 
 ## Prerequisites
 
@@ -132,15 +125,47 @@ kubectl apply -f k8s/test-pods.yaml
 | Webhook Deployment | `kubectl get pods -l app=k8s-admission-webhook` shows `1/1` running. |
 | Mutation | `kubectl get pod valid-pod -o jsonpath='{.spec.containers[0].resources.limits}'` shows the injected limits. |
 
+## Benchmark Results (Last Run: 2026-08-29)
+| Metric | Value | Environment |
+|---|---|---|
+| Malformed Payload Denial | 100% | Adversارڈial test suite |
+| Invalid Pod Rejection | Validated | `kind` E2E Test |
+| Valid Pod Admission | Validated | `kind` E2E Test |
+
+## Key Design Decisions
+- **Why Custom Bash Cert Generation over cert-manager:** This project prioritizes educational transparency. The manual script exposes the exact mechanics of generating the CA bundle and injecting it into the `ValidatingWebhookConfiguration` object.
+- See `docs/adr/` for full Architecture Decision Records.
+- See `docs/slo.md` for availability and latency objectives.
+
+## Test Coverage
+Includes standard unit tests and adversarial checks against expired TLS or garbage payloads.
+
+### 🧪 Integration Testing & CI
+This repository is equipped with local integration testing scripts and a GitHub Actions pipeline (`.github/workflows/ci.yml`).
+
+To run the local mock API server script which spins up the webhook and sends requests:
+```bash
+chmod +x scripts/test_local.sh
+./scripts/test_local.sh
+```
+
+To run the Go integration tests manually:
+```bash
+go test -v ./tests/...
+```
+
+## Known Limitations & Honest Scope
+- **Certificate Rotation**: Because it avoids `cert-manager`, the certificates are static for 1 year. The script must be manually re-run upon expiration. This is suitable for a prototype but unacceptable for a production cluster.
+
 ## Author
 
 **Sumit Dalavi — Senior DevSecOps / Platform Engineer**
 - [GitHub](https://github.com/your-username)
 - [LinkedIn](https://linkedin.com/in/your-profile)
 
-
 ## CI & Reliability Updates (August 2026)
 
 - **CI Pipeline Remediation:** Successfully resolved all CI/CD pipeline failures and established baseline CI workflows.
 - **Specific Fix:** Added and configured robust GitHub Actions workflows for automated testing, linting, and formatting.
 - **Status:** 🟩 Passing
+
