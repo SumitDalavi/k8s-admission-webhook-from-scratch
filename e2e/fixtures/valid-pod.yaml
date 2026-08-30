@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: valid-pod
+  labels:
+    team: security
+spec:
+  containers:
+  - name: my-app
+    image: nginx
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      privileged: false
