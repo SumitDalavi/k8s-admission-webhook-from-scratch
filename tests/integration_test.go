@@ -7,7 +7,7 @@ import (
 	"testing"
 	"strings"
 
-	"github.com/your-username/k8s-admission-webhook-from-scratch/pkg/validate"
+	"github.com/SumitDalavi/k8s-admission-webhook-from-scratch/pkg/validate"
 	admissionv1 "k8s.io/api/admission/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"

@@ -1,4 +1,4 @@
-module github.com/your-username/k8s-admission-webhook-from-scratch
+module github.com/SumitDalavi/k8s-admission-webhook-from-scratch
 
 go 1.26.0
 
