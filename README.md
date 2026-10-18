@@ -3,6 +3,7 @@
 ![CI](https://github.com/SumitDalavi/k8s-admission-webhook-from-scratch/actions/workflows/ci.yml/badge.svg?branch=master)
 [![Release](https://img.shields.io/github/v/release/SumitDalavi/k8s-admission-webhook-from-scratch)](https://github.com/SumitDalavi/k8s-admission-webhook-from-scratch/releases)
 [![Release Workflow](https://github.com/SumitDalavi/k8s-admission-webhook-from-scratch/actions/workflows/release.yml/badge.svg)](https://github.com/SumitDalavi/k8s-admission-webhook-from-scratch/actions/workflows/release.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/SumitDalavi/k8s-admission-webhook-from-scratch.svg)](https://pkg.go.dev/github.com/SumitDalavi/k8s-admission-webhook-from-scratch)
 
 > **Maturity:** Full Prototype
 > _End-to-end Kubernetes validating and mutating admission webhook built in Go._
