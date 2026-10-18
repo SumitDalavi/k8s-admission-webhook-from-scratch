@@ -1,6 +1,8 @@
 # Kubernetes Admission Webhook (Hand-Built, Go)
 
 ![CI](https://github.com/SumitDalavi/k8s-admission-webhook-from-scratch/actions/workflows/ci.yml/badge.svg?branch=master)
+[![Release](https://img.shields.io/github/v/release/SumitDalavi/k8s-admission-webhook-from-scratch)](https://github.com/SumitDalavi/k8s-admission-webhook-from-scratch/releases)
+[![Release Workflow](https://github.com/SumitDalavi/k8s-admission-webhook-from-scratch/actions/workflows/release.yml/badge.svg)](https://github.com/SumitDalavi/k8s-admission-webhook-from-scratch/actions/workflows/release.yml)
 
 > **Maturity:** Full Prototype
 > _End-to-end Kubernetes validating and mutating admission webhook built in Go._
@@ -157,11 +159,20 @@ go test -v ./tests/...
 ## Known Limitations & Honest Scope
 - **Certificate Rotation**: Because it avoids `cert-manager`, the certificates are static for 1 year. The script must be manually re-run upon expiration. This is suitable for a prototype but unacceptable for a production cluster.
 
+## 🔒 Release & Security Verification
+
+Every tagged release (*.*.*) triggers an automated DevSecOps release workflow:
+1. **Automated Testing:** Runs go test -v ./... across unit and integration suites.
+2. **Container Image Build:** Builds the minimal admission webhook container image (ghcr.io/sumitdalavi/k8s-admission-webhook-from-scratch:<tag>).
+3. **Vulnerability Scanning:** Scans the webhook container image using [Aqua Security Trivy](https://github.com/aquasecurity/trivy-action) for HIGH and CRITICAL CVEs.
+4. **SBOM Generation:** Generates a Software Bill of Materials (SBOM) in SPDX JSON format (sbom.spdx.json) using [Anchore Syft](https://github.com/anchore/sbom-action).
+5. **GitHub Release Publishing:** Packages release notes and attaches sbom.spdx.json as a verifiable supply-chain asset.
+
 ## Author
 
 **Sumit Dalavi — Senior DevSecOps / Platform Engineer**
-- [GitHub](https://github.com/your-username)
-- [LinkedIn](https://linkedin.com/in/your-profile)
+- [GitHub](https://github.com/SumitDalavi)
+- [LinkedIn](https://in.linkedin.com/in/sumit-dalavi-762838129)
 
 ## CI & Reliability Updates (August 2026)
 
