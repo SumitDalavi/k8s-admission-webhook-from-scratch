@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -29,13 +30,36 @@ func init() {
 }
 
 func run(certFile, keyFile string) int {
+	// Validate initial cert/key pair (fail-fast on invalid paths as expected by tests)
+	initialCert, err := tls.LoadX509KeyPair(certFile, keyFile)
+	if err != nil {
+		log.Printf("Failed to load initial certificates: %v", err)
+		return 1
+	}
+
+	reloader := newCertReloader(certFile, keyFile, initialCert)
+	reloader.watch()
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/validate", serve(validate.ValidatePod))
 	mux.HandleFunc("/mutate", serve(mutate.MutatePod))
+	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`{"status":"ok","mode":"tls_reloader"}`))
+	})
 
-	log.Println("Starting webhook server on port 8443...")
-	err := http.ListenAndServeTLS(":8443", certFile, keyFile, mux)
-	if err != nil {
+	server := &http.Server{
+		Addr:    ":8443",
+		Handler: mux,
+		TLSConfig: &tls.Config{
+			GetCertificate: reloader.GetCertificate,
+		},
+	}
+
+	log.Println("Starting webhook server on port 8443 with dynamic TLS cert reloader...")
+	err = server.ListenAndServeTLS("", "")
+	if err != nil && err != http.ErrServerClosed {
 		log.Printf("Failed to start server: %v", err)
 		return 1
 	}
@@ -43,8 +67,23 @@ func run(certFile, keyFile string) int {
 }
 
 func main() {
-	// Webhooks in k8s MUST be served over HTTPS. We assume certs are mounted at /etc/webhook/certs
-	os.Exit(run("/etc/webhook/certs/tls.crt", "/etc/webhook/certs/tls.key"))
+	certFile := os.Getenv("TLS_CERT_PATH")
+	if certFile == "" {
+		if certDir := os.Getenv("CERT_DIR"); certDir != "" {
+			certFile = certDir + "/tls.crt"
+		} else {
+			certFile = "/etc/webhook/certs/tls.crt"
+		}
+	}
+	keyFile := os.Getenv("TLS_KEY_PATH")
+	if keyFile == "" {
+		if certDir := os.Getenv("CERT_DIR"); certDir != "" {
+			keyFile = certDir + "/tls.key"
+		} else {
+			keyFile = "/etc/webhook/certs/tls.key"
+		}
+	}
+	os.Exit(run(certFile, keyFile))
 }
 
 type admitFunc func(*admissionv1.AdmissionRequest, *corev1.Pod) *admissionv1.AdmissionResponse
