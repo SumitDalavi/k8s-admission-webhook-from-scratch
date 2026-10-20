@@ -192,30 +192,8 @@ go test -v ./tests/...
 
 ## 🔒 Release & Security Verification
 
-Every tagged release (
-*.*.*) triggers an automated DevSecOps release workflow:
-1. **Automated Testing:** Runs go test -v ./... across unit and integration suites.
-2. **Container Image Build:** Builds the minimal admission webhook container image (ghcr.io/sumitdalavi/k8s-admission-webhook-from-scratch:<tag>).
-3. **Vulnerability Scanning:** Scans the webhook container image using [Aqua Security Trivy](https://github.com/aquasecurity/trivy-action) for HIGH and CRITICAL CVEs.
-4. **SBOM Generation:** Generates a Software Bill of Materials (SBOM) in SPDX JSON format (sbom.spdx.json) using [Anchore Syft](https://github.com/anchore/sbom-action).
-5. **GitHub Release Publishing:** Packages release notes and attaches sbom.spdx.json as a verifiable supply-chain asset.
-
-## Author
-
-**Sumit Dalavi — Senior DevSecOps / Platform Engineer**
-- [GitHub](https://github.com/SumitDalavi)
-- [LinkedIn](https://in.linkedin.com/in/sumit-dalavi-762838129)
-
-## CI & Reliability Updates (August 2026)
-
-- **CI Pipeline Remediation:** Successfully resolved all CI/CD pipeline failures and established baseline CI workflows.
-- **Specific Fix:** Added and configured robust GitHub Actions workflows for automated testing, linting, and formatting.
-- **Status:** 🟩 Passing
-
-## Release & Security Verification
-
 Every tagged release (`v*.*.*`) triggers an automated DevSecOps release workflow:
-1. **Automated Testing:** Runs test suite gates before build.
+1. **Automated Testing:** Runs `go test -v ./...` across unit and integration suites.
 2. **Container Image Build:** Builds production container image (`ghcr.io/sumitdalavi/k8s-admission-webhook-from-scratch:<tag>`).
 3. **Vulnerability Scanning:** Scans the image using [Aqua Security Trivy](https://github.com/aquasecurity/trivy-action) for `HIGH` and `CRITICAL` CVEs.
 4. **SBOM Generation:** Generates a Software Bill of Materials (SBOM) in SPDX JSON format (`sbom.spdx.json`) using [Anchore Syft](https://github.com/anchore/sbom-action).
@@ -224,16 +202,22 @@ Every tagged release (`v*.*.*`) triggers an automated DevSecOps release workflow
 ### Verifying Releases via GitHub CLI
 ```bash
 # View release details
-gh release view v0.1.0 --repo SumitDalavi/k8s-admission-webhook-from-scratch
+gh release view v0.2.0 --repo SumitDalavi/k8s-admission-webhook-from-scratch
 
 # Download and verify SBOM
-gh release download v0.1.0 --repo SumitDalavi/k8s-admission-webhook-from-scratch --pattern "sbom.spdx.json"
+gh release download v0.2.0 --repo SumitDalavi/k8s-admission-webhook-from-scratch --pattern "sbom.spdx.json"
 cat sbom.spdx.json | jq .
 ```
 
-## Documentation
+## 📚 Documentation
 
 - [Architecture](docs/ARCHITECTURE.md)
 - [Runbook](docs/runbook.md)
 - [Decisions](docs/decisions.md)
 - [Changelog](docs/changelog.md)
+
+## 👨‍💻 Author
+
+**Sumit Dalavi** — Senior DevSecOps / Platform Engineer
+- [GitHub](https://github.com/SumitDalavi)
+- [LinkedIn](https://in.linkedin.com/in/sumit-dalavi-762838129)
