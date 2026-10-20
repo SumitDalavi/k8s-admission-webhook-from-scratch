@@ -1,8 +1,13 @@
 # Kubernetes Admission Webhook (Hand-Built, Go)
 
-![CI](https://github.com/SumitDalavi/k8s-admission-webhook-from-scratch/actions/workflows/ci.yml/badge.svg?branch=master)
-[![Release](https://img.shields.io/github/v/release/SumitDalavi/k8s-admission-webhook-from-scratch)](https://github.com/SumitDalavi/k8s-admission-webhook-from-scratch/releases)
+[![CI Pipeline](https://github.com/SumitDalavi/k8s-admission-webhook-from-scratch/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/SumitDalavi/k8s-admission-webhook-from-scratch/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/SumitDalavi/k8s-admission-webhook-from-scratch?color=0969da&label=release&logo=github)](https://github.com/SumitDalavi/k8s-admission-webhook-from-scratch/releases)
 [![Release Workflow](https://github.com/SumitDalavi/k8s-admission-webhook-from-scratch/actions/workflows/release.yml/badge.svg)](https://github.com/SumitDalavi/k8s-admission-webhook-from-scratch/actions/workflows/release.yml)
+[![GHCR Container](https://img.shields.io/badge/ghcr.io-v0.2.0-blue?logo=docker&logoColor=white)](https://github.com/SumitDalavi/k8s-admission-webhook-from-scratch/pkgs/container/k8s-admission-webhook-from-scratch)
+[![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?logo=go&logoColor=white)](https://golang.org)
+[![SBOM](https://img.shields.io/badge/SBOM-SPDX%202.3-blueviolet?logo=spdx)](https://github.com/SumitDalavi/k8s-admission-webhook-from-scratch/releases/tag/v0.2.0)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+
 [![Go Reference](https://pkg.go.dev/badge/github.com/SumitDalavi/k8s-admission-webhook-from-scratch.svg)](https://pkg.go.dev/github.com/SumitDalavi/k8s-admission-webhook-from-scratch)
 
 > **Maturity:** Full Prototype
@@ -187,7 +192,8 @@ go test -v ./tests/...
 
 ## 🔒 Release & Security Verification
 
-Every tagged release (*.*.*) triggers an automated DevSecOps release workflow:
+Every tagged release (
+*.*.*) triggers an automated DevSecOps release workflow:
 1. **Automated Testing:** Runs go test -v ./... across unit and integration suites.
 2. **Container Image Build:** Builds the minimal admission webhook container image (ghcr.io/sumitdalavi/k8s-admission-webhook-from-scratch:<tag>).
 3. **Vulnerability Scanning:** Scans the webhook container image using [Aqua Security Trivy](https://github.com/aquasecurity/trivy-action) for HIGH and CRITICAL CVEs.
