@@ -10,8 +10,7 @@
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/SumitDalavi/k8s-admission-webhook-from-scratch.svg)](https://pkg.go.dev/github.com/SumitDalavi/k8s-admission-webhook-from-scratch)
 
-> **Maturity:** Full Prototype
-> _End-to-end Kubernetes validating and mutating admission webhook built in Go._
+> End-to-end Kubernetes validating and mutating admission webhook built from scratch in Go.
 
 A hand-written Kubernetes Validating and Mutating Admission Webhook built from scratch in Go. This project demonstrates a deep understanding of the raw Kubernetes admission control API and TLS handling without relying on policy frameworks like Kyverno or OPA Gatekeeper.
 
